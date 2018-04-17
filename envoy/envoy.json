@@ -72,7 +72,7 @@
 	        "lb_type": "round_robin", 
 	        "hosts": [
 	          {
-	            "url": "tcp://192.168.99.100:9411"
+	            "url": "tcp://zipkin:9411"
 	          }
 	        ]		
 		}],
@@ -84,7 +84,7 @@
 				"lb_type": "round_robin",
 				"hosts": [
 				  {
-					"url": "tcp://192.168.99.100:9200"
+					"url": "tcp://envoy-discovery:9200"
 				  }
 				]
 			},

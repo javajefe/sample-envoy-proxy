@@ -1,0 +1,62 @@
+version: '2'
+services:
+
+  envoy:
+    build:
+      context: ./envoy
+      dockerfile: Dockerfile
+    networks:
+      - envoymesh
+    ports:
+      - "9901:9901"
+      - "10000:10000"
+    links:
+      - envoy-discovery
+      - zipkin
+
+  envoy-discovery:
+    build:
+      context: ./envoy-discovery
+      dockerfile: Dockerfile
+    networks:
+      envoymesh:
+        aliases:
+          - envoy-discovery
+
+  person-service:
+    build:
+      context: ./person-service
+      dockerfile: Dockerfile
+    networks:
+      envoymesh:
+        aliases:
+          - person-service
+    environment:
+      - DISCOVERY_URL=http://envoy-discovery:9200
+    links:
+      - envoy-discovery
+
+  product-service:
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
+    networks:
+      envoymesh:
+        aliases:
+          - product-service
+    environment:
+      - DISCOVERY_URL=http://envoy-discovery:9200
+    links:
+      - envoy-discovery
+
+  zipkin:
+    image: openzipkin/zipkin
+    networks:
+      envoymesh:
+        aliases:
+          - zipkin
+    ports:
+      - "9411:9411"
+
+networks:
+  envoymesh: {}
